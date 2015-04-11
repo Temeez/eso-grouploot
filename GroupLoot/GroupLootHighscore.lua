@@ -37,7 +37,7 @@ end
     Member functions
 ]]--
 function GroupLootHighscore:NewMember(name)
-    name = name:gsub("%^%a+","")
+    name = zo_strformat(SI_UNIT_NAME, name)
 
     if not highscoreSettings.members[name] then
         highscoreSettings.members[name] = {
@@ -62,7 +62,7 @@ function GroupLootHighscore:NewMember(name)
 end
 
 function GroupLootHighscore:RemoveMember(name)
-    name = name:gsub("%^%a+","")
+    name = zo_strformat(SI_UNIT_NAME, name)
     -- Not needed if UpdateHighscoreWindow works   V
     --self:HideRemovedMember(highscoreSettings.members[name].rowPosition)
     highscoreSettings.members[name] = nil
@@ -70,8 +70,7 @@ function GroupLootHighscore:RemoveMember(name)
 end
 
 function GroupLootHighscore:DeleteMembers()
-    highscoreSettings.members = nil
-    highscoreSettings.members = {}
+    ZO_ClearTable(highscoreSettings.members)
     highscoreSettings.memberCount = 0
 
     self:UpdateWindowSize()
@@ -79,13 +78,12 @@ function GroupLootHighscore:DeleteMembers()
 end
 
 function GroupLootHighscore:MemberExists(name)
+    name = zo_strformat(SI_UNIT_NAME, name)
     return highscoreSettings.members[name] ~= nil
 end
 
 function GroupLootHighscore:ResetMembers()
-    local count = 0;
     for k, v in pairs(highscoreSettings.members) do
-        count = count + 1;
 
         highscoreSettings.members[k] = {
             trash       = 0,
@@ -125,9 +123,9 @@ function GroupLootHighscore:UpdateWindowSize()
 end
 
 function GroupLootHighscore:UpdateHighscoreWindow()
-    local count = 0;
+    local count = 0
     for k, v in pairs(highscoreSettings.members) do
-        count = count + 1;
+        count = count + 1
 
         GroupLootHighscoreWindow:GetNamedChild("ROW" .. count .. "NAME"):SetText(k)
         GroupLootHighscoreWindow:GetNamedChild("ROW" .. count .. "TRASH"):SetText(v.trash)
@@ -181,17 +179,20 @@ end
     Update functions
 ]]--
 function GroupLootHighscore:IsBestLoot(name, newLootValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local currentBestLootValue = tonumber(string.match(highscoreSettings.members[name].bestLoot, "%d+"))
     return newLootValue > currentBestLootValue
 end
 
 function GroupLootHighscore:UpdateBestLoot(name, itemLink)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = tonumber(string.match(highscoreSettings.members[name].bestLoot, "%d+"))
-    highscoreSettings.members[name].bestLoot = GetItemLinkName(itemLink):gsub("%^%a+","") .. " (" .. GetItemLinkValue(itemLink, true) .. "g)"
+    highscoreSettings.members[name].bestLoot = zo_strformat("<<t:1>> (<<2>>g)", GetItemLinkName(itemLink), GetItemLinkValue(itemLink, true))
     self:UpdateHighscoreWindow()
 end
 
 function GroupLootHighscore:UpdateTotalValue(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].totalValue
     newValue = oldValue + newValue
     highscoreSettings.members[name].totalValue = newValue
@@ -199,6 +200,7 @@ function GroupLootHighscore:UpdateTotalValue(name, newValue)
 end
 
 function GroupLootHighscore:UpdateDeath(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].deaths
     newValue = oldValue + newValue
     highscoreSettings.members[name].deaths = newValue
@@ -206,6 +208,7 @@ function GroupLootHighscore:UpdateDeath(name, newValue)
 end
 
 function GroupLootHighscore:UpdateTrash(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].trash
     newValue = oldValue + newValue
     highscoreSettings.members[name].trash = newValue
@@ -213,6 +216,7 @@ function GroupLootHighscore:UpdateTrash(name, newValue)
 end
 
 function GroupLootHighscore:UpdateNormal(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].normal
     newValue = oldValue + newValue
     highscoreSettings.members[name].normal = newValue
@@ -220,6 +224,7 @@ function GroupLootHighscore:UpdateNormal(name, newValue)
 end
 
 function GroupLootHighscore:UpdateMagic(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].magic
     newValue = oldValue + newValue
     highscoreSettings.members[name].magic = newValue
@@ -227,6 +232,7 @@ function GroupLootHighscore:UpdateMagic(name, newValue)
 end
 
 function GroupLootHighscore:UpdateArcane(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].arcane
     newValue = oldValue + newValue
     highscoreSettings.members[name].arcane = newValue
@@ -234,6 +240,7 @@ function GroupLootHighscore:UpdateArcane(name, newValue)
 end
 
 function GroupLootHighscore:UpdateArtifact(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].artifact
     newValue = oldValue + newValue
     highscoreSettings.members[name].artifact = newValue
@@ -241,6 +248,7 @@ function GroupLootHighscore:UpdateArtifact(name, newValue)
 end
 
 function GroupLootHighscore:UpdateLegendary(name, newValue)
+    name = zo_strformat(SI_UNIT_NAME, name)
     local oldValue = highscoreSettings.members[name].legendary
     newValue = oldValue + newValue
     highscoreSettings.members[name].legendary = newValue

@@ -1,4 +1,5 @@
 local ADDON_NAME = "GroupLoot"
+local ADDON_VERSION = "0.9.2"
 
 local LAM2 = LibStub("LibAddonMenu-2.0")
 if not LAM2 then return end
@@ -14,7 +15,7 @@ function GroupLootSettings:New()
 end
 
 function GroupLootSettings:Initialize()
-    GroupLootDefaults = {
+    local GroupLootDefaults = {
         displayGold         = true,
         displayTrash        = false, -- Grey
         displayNormal       = true, -- White
@@ -34,8 +35,10 @@ function GroupLootSettings:Initialize()
     settings = ZO_SavedVars:New(ADDON_NAME .. "_db", 2, nil, GroupLootDefaults)
     -- 
     if not settings.displayOnWindow then GroupLootWindow:SetHidden(not settings.displayOnWindow) end
-    EVENT_MANAGER:RegisterForEvent(ADDON_NAME, EVENT_ACTION_LAYER_POPPED, GroupLootSettings.ShowInterface)
-    EVENT_MANAGER:RegisterForEvent(ADDON_NAME, EVENT_ACTION_LAYER_PUSHED, GroupLootSettings.HideInterface)
+    local sceneFragment = ZO_HUDFadeSceneFragment:New(GroupLootWindow)
+    sceneFragment:SetConditional(function() return settings.displayOnWindow end)
+    HUD_SCENE:AddFragment(sceneFragment)
+    HUD_UI_SCENE:AddFragment(sceneFragment)
     --
 
     if settings.displayOnWindow then
@@ -45,7 +48,7 @@ function GroupLootSettings:Initialize()
     local panelData = {
         type = "panel",
         name = ADDON_NAME,
-        displayName = "Group Loot",
+        displayName = ZO_HIGHLIGHT_TEXT:Colorize("Group Loot"),
         author = "Temeez",
         version = ADDON_VERSION,
         slashCommand = "/grouploot",
@@ -68,7 +71,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayOwnLoot end,
             setFunc = function(value) self:ToggleOwnLoot(value) end,
             width = "full",
-            default = settings.displayOwnLoot,
+            default = GroupLootDefaults.displayOwnLoot,
         },
         {
             type = "checkbox",
@@ -77,7 +80,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayGroupLoot end,
             setFunc = function(value) self:ToggleGroupLoot(value) end,
             width = "full",
-            default = settings.displayGroupLoot,
+            default = GroupLootDefaults.displayGroupLoot,
         },
         {
             type = "checkbox",
@@ -86,7 +89,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayTrash end,
             setFunc = function(value) self:ToggleTrash(value) end,
             width = "full",
-            default = settings.displayTrash
+            default = GroupLootDefaults.displayTrash
         },
         {
             type = "checkbox",
@@ -95,7 +98,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayNormal end,
             setFunc = function(value) self:ToggleNormal(value) end,
             width = "full",
-            default = settings.displayNormal
+            default = GroupLootDefaults.displayNormal
         },
         {
             type = "checkbox",
@@ -104,7 +107,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayMagic end,
             setFunc = function(value) self:ToggleMagic(value) end,
             width = "full",
-            default = settings.displayMagic
+            default = GroupLootDefaults.displayMagic
         },
         {
             type = "checkbox",
@@ -113,7 +116,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayArcane end,
             setFunc = function(value) self:ToggleArcane(value) end,
             width = "full",
-            default = settings.displayArcane
+            default = GroupLootDefaults.displayArcane
         },
         {
             type = "checkbox",
@@ -122,7 +125,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayArtifact end,
             setFunc = function(value) self:ToggleArtifact(value) end,
             width = "full",
-            default = settings.displayArtifact
+            default = GroupLootDefaults.displayArtifact
         },
         {
             type = "checkbox",
@@ -131,7 +134,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayLegendary end,
             setFunc = function(value) self:ToggleLegendary(value) end,
             width = "full",
-            default = settings.displayLegendary
+            default = GroupLootDefaults.displayLegendary
         },
 
         {
@@ -146,7 +149,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayOnChat end,
             setFunc = function(value) self:ToggleOnChat(value) end,
             width = "full",
-            default = settings.displayOnChat
+            default = GroupLootDefaults.displayOnChat
         },
         {
             type = "checkbox",
@@ -155,7 +158,7 @@ function GroupLootSettings:Initialize()
             getFunc = function() return settings.displayOnWindow end,
             setFunc = function(value) self:ToggleOnWindow(value) end,
             width = "full",
-            default = settings.displayOnWindow,
+            default = GroupLootDefaults.displayOnWindow,
         },
     }
 
@@ -183,18 +186,6 @@ end
 
     piste -> : ? tesm
 ]]--
-function GroupLootSettings.HideInterface(event, layerIndex, activeLayerIndex)
-    if (activeLayerIndex == 3) then
-        GroupLootWindow:SetHidden(true)
-    end
-end
-
-function GroupLootSettings.ShowInterface(...)
-    if settings.displayOnWindow then
-        GroupLootSettings:SetWindowValues()
-    end
-end
-
 function GroupLootSettings:MoveStart()
     GroupLootWindowBG:SetAlpha(0.5)
 end
@@ -219,6 +210,12 @@ function GroupLootSettings:SetWindowValues()
     GroupLootWindowBuffer:SetAnchor(TOP, GroupLootWindow, TOP, 0, 0)
     GroupLootWindowBuffer:SetWidth(400)
     GroupLootWindowBuffer:SetHeight(80)
+
+    --use the same font as in chat window
+    local face = ZoFontEditChat:GetFontInfo()
+    local fontSize = GetChatFontSize()
+    local decoration = (fontSize <= 14 and "soft-shadow-thin" or "soft-shadow-thick")
+    GroupLootWindowBuffer:SetFont(zo_strjoin("|", face, fontSize, decoration))
 end
 
 --[[

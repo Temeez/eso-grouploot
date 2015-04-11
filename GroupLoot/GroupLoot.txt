@@ -1,7 +1,7 @@
-## Title: Group Loot
+## Title: |cEFEBBEGroup Loot|r 0.9.2
 ## Description: Display the loot you and/or your group members get. Good for some events for example. Type /glhelp for commands.
 ## Author: Temeez
-## Version: 0.9.1
+## Version: 0.9.2
 ## APIVersion: 100011
 ## OptionalDependsOn: LibAddonMenu-2.0
 ## SavedVariables: GroupLoot_db GroupLootHighscore_db
@@ -23,5 +23,5 @@ libs/LibAddonMenu-2.0/controls/texture.lua
 GroupLootSettings.lua
 GroupLootHighscore.lua
 GroupLootHighscore.xml
-GroupLoot.lua
 GroupLoot.xml
+GroupLoot.lua

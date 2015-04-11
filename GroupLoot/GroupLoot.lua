@@ -1,6 +1,7 @@
 local ADDON_NAME    = "GroupLoot"
 
-local GLSettings = nil -- turha?
+local GLSettings
+local GLHighscore 
 
 GroupLoot = {}
 
@@ -21,11 +22,9 @@ function GroupLoot:OnAddOnLoaded(event, addonName)
 end
 
 -- EVENT_LOOT_RECEIVED
-function GroupLoot:OnItemLooted(event, lootedBy, itemLink, quantity, itemSound, lootType, player)
+function GroupLoot:OnItemLooted(event, name, itemLink, quantity, itemSound, lootType, player)
     local lootMessage   = nil
     local itemQuality   = GetItemLinkQuality(itemLink)
-    local name          = lootedBy:gsub("%^%a+","")
-    local itemLink      = itemLink:gsub("%^%a+","")
     local totalValue    = GetItemLinkValue(itemLink, true) * quantity
 
     -- Return if own (player) loot is off
@@ -71,11 +70,11 @@ function GroupLoot:OnItemLooted(event, lootedBy, itemLink, quantity, itemSound, 
 
     -- Player or group member
     if not player then
-        lootMessage = name .. " received " .. itemLink .. " x" .. quantity .. " worth " .. totalValue .. "g"
+        lootMessage = zo_strformat("<<C:1>> received <<t:2>> x<<3>> worth |cFFFFFF<<4>>|rg", name, itemLink, quantity, totalValue)
         if GLSettings:DisplayInChat() then d(lootMessage) end
         GroupLootWindowBuffer:AddMessage(lootMessage, 255, 255, 0, 1)
     else
-        lootMessage = "Received " .. itemLink .. " x" .. quantity .. " worth " .. totalValue .. "g"
+        lootMessage = zo_strformat("Received <<t:1>> x<<2>> worth |cFFFFFF<<3>>|rg", itemLink, quantity, totalValue)
         if GLSettings:DisplayInChat() then d(lootMessage) end
         GroupLootWindowBuffer:AddMessage(lootMessage, 255, 255, 0, 1)
      end
