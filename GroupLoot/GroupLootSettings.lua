@@ -37,7 +37,10 @@ function GroupLootSettings:Initialize()
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME, EVENT_ACTION_LAYER_POPPED, GroupLootSettings.ShowInterface)
     EVENT_MANAGER:RegisterForEvent(ADDON_NAME, EVENT_ACTION_LAYER_PUSHED, GroupLootSettings.HideInterface)
     --
-    self:SetWindowValues()
+
+    if settings.displayOnWindow then
+        self:SetWindowValues()
+    end
 
     local panelData = {
         type = "panel",
@@ -84,7 +87,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleTrash(value) end,
             width = "full",
             default = settings.displayTrash
-            --warning = "Will need to reload the UI.",  --(optional)
         },
         {
             type = "checkbox",
@@ -94,7 +96,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleNormal(value) end,
             width = "full",
             default = settings.displayNormal
-            --warning = "Will need to reload the UI.",  --(optional)
         },
         {
             type = "checkbox",
@@ -104,7 +105,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleMagic(value) end,
             width = "full",
             default = settings.displayMagic
-            --warning = "Will need to reload the UI.",  --(optional)
         },
         {
             type = "checkbox",
@@ -114,7 +114,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleArcane(value) end,
             width = "full",
             default = settings.displayArcane
-            --warning = "Will need to reload the UI.",  --(optional)
         },
         {
             type = "checkbox",
@@ -124,7 +123,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleArtifact(value) end,
             width = "full",
             default = settings.displayArtifact
-            --warning = "Will need to reload the UI.",  --(optional)
         },
         {
             type = "checkbox",
@@ -134,7 +132,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleLegendary(value) end,
             width = "full",
             default = settings.displayLegendary
-            --warning = "Will need to reload the UI.",  --(optional)
         },
 
         {
@@ -150,7 +147,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleOnChat(value) end,
             width = "full",
             default = settings.displayOnChat
-            --warning = "Will need to reload the UI.",  --(optional)
         },
         {
             type = "checkbox",
@@ -160,7 +156,6 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleOnWindow(value) end,
             width = "full",
             default = settings.displayOnWindow,
-            warning = "UI reload required.",
         },
     }
 
@@ -195,7 +190,9 @@ function GroupLootSettings.HideInterface(event, layerIndex, activeLayerIndex)
 end
 
 function GroupLootSettings.ShowInterface(...)
-    GroupLootWindow:SetHidden(false)
+    if settings.displayOnWindow then
+        GroupLootSettings:SetWindowValues()
+    end
 end
 
 function GroupLootSettings:MoveStart()
@@ -216,6 +213,7 @@ function GroupLootSettings:SetWindowValues()
     GroupLootWindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
     GroupLootWindow:SetAlpha(0.5)
     GroupLootWindowBG:SetAlpha(0)
+    GroupLootWindow:SetHidden(false)
 
     GroupLootWindowBuffer:ClearAnchors()
     GroupLootWindowBuffer:SetAnchor(TOP, GroupLootWindow, TOP, 0, 0)
@@ -256,6 +254,7 @@ end
 
 function GroupLootSettings:ToggleOnWindow(value)
     settings.displayOnWindow = value
+    if value then self:SetWindowValues() end
 end
 
 function GroupLootSettings:ToggleOwnLoot(value)
