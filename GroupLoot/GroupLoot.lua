@@ -70,11 +70,19 @@ function GroupLoot:OnItemLooted(event, name, itemLink, quantity, itemSound, loot
 
     -- Player or group member
     if not player then
-        lootMessage = zo_strformat("<<C:1>> received <<t:2>> x<<3>> worth |cFFFFFF<<4>>|rg", name, itemLink, quantity, totalValue)
+        if GLSettings:DisplayLootValue() then
+            lootMessage = zo_strformat("<<C:1>> received <<t:2>> x<<3>> worth |cFFFFFF<<4>>|rg", name, itemLink, quantity, totalValue)
+        else
+            lootMessage = zo_strformat("<<C:1>> received <<t:2>> x<<3>>", name, itemLink, quantity)
+        end
         if GLSettings:DisplayInChat() then d(lootMessage) end
         GroupLootWindowBuffer:AddMessage(lootMessage, 255, 255, 0, 1)
     else
-        lootMessage = zo_strformat("Received <<t:1>> x<<2>> worth |cFFFFFF<<3>>|rg", itemLink, quantity, totalValue)
+        if GLSettings:DisplayLootValue() then
+            lootMessage = zo_strformat("Received <<t:1>> x<<2>> worth |cFFFFFF<<3>>|rg", itemLink, quantity, totalValue)
+        else
+            lootMessage = zo_strformat("Received <<t:1>> x<<2>>", itemLink, quantity)
+        end
         if GLSettings:DisplayInChat() then d(lootMessage) end
         GroupLootWindowBuffer:AddMessage(lootMessage, 255, 255, 0, 1)
      end

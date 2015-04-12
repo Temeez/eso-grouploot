@@ -1,5 +1,5 @@
 local ADDON_NAME = "GroupLoot"
-local ADDON_VERSION = "0.9.2"
+local ADDON_VERSION = "0.9.3"
 
 local LAM2 = LibStub("LibAddonMenu-2.0")
 if not LAM2 then return end
@@ -29,6 +29,7 @@ function GroupLootSettings:Initialize()
         displayGroupLoot    = true,
         positionLeft        = nil,
         positionTop         = nil,
+        displayLootValue    = false,
     }
 
     --
@@ -81,6 +82,15 @@ function GroupLootSettings:Initialize()
             setFunc = function(value) self:ToggleGroupLoot(value) end,
             width = "full",
             default = GroupLootDefaults.displayGroupLoot,
+        },
+        {
+            type = "checkbox",
+            name = "Loot value",
+            tooltip = "Show or hide loot value on chat/window.",
+            getFunc = function() return settings.displayLootValue end,
+            setFunc = function(value) self:ToggleLootValue(value) end,
+            width = "full",
+            default = GroupLootDefaults.displayLootValue,
         },
         {
             type = "checkbox",
@@ -181,6 +191,10 @@ function GroupLootSettings:DisplayGroupLoot()
     return settings.displayGroupLoot
 end
 
+function GroupLootSettings:DisplayLootValue()
+    return settings.displayLootValue
+end
+
 --[[
     UI functions
 
@@ -260,4 +274,8 @@ end
 
 function GroupLootSettings:ToggleGroupLoot(value)
     settings.displayGroupLoot = value
+end
+
+function GroupLootSettings:ToggleLootValue(value)
+    settings.displayLootValue = value
 end

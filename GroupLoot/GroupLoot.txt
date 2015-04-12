@@ -1,7 +1,7 @@
-## Title: |cEFEBBEGroup Loot|r 0.9.2
+## Title: |cEFEBBEGroup Loot|r 0.9.3
 ## Description: Display the loot you and/or your group members get. Good for some events for example. Type /glhelp for commands.
 ## Author: Temeez
-## Version: 0.9.2
+## Version: 0.9.3
 ## APIVersion: 100011
 ## OptionalDependsOn: LibAddonMenu-2.0
 ## SavedVariables: GroupLoot_db GroupLootHighscore_db
