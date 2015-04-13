@@ -19,7 +19,6 @@ function GroupLootHighscore:Initialize()
     GroupLootHighscoreWindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, highscoreSettings.positionLeft, highscoreSettings.positionTop)
 
     self:ConsoleCommands()
-    self:UpdateWindowSize()
     self:UpdateHighscoreWindow()
 end
 
@@ -63,8 +62,6 @@ end
 
 function GroupLootHighscore:RemoveMember(name)
     name = zo_strformat(SI_UNIT_NAME, name)
-    -- Not needed if UpdateHighscoreWindow works   V
-    --self:HideRemovedMember(highscoreSettings.members[name].rowPosition)
     highscoreSettings.members[name] = nil
     self:UpdateHighscoreWindow()
 end
@@ -72,8 +69,6 @@ end
 function GroupLootHighscore:DeleteMembers()
     ZO_ClearTable(highscoreSettings.members)
     highscoreSettings.memberCount = 0
-
-    self:UpdateWindowSize()
     self:UpdateHighscoreWindow()
 end
 
@@ -106,15 +101,35 @@ end
 function GroupLootHighscore:AddAllMembersInGroup()
     local countMembers = GetGroupSize()
 
-    while countMembers > 0 do
-        local name = GetUnitName(GetGroupUnitTagByIndex(countMembers))
+    -- Get list of member names in current group
+    local members = {}
+    for i = 1, countMembers do
+        local unitTag = GetGroupUnitTagByIndex(i)
+        if unitTag then
+            local name = zo_strformat(SI_UNIT_NAME, GetUnitName(unitTag))
+            members[name] = true
+        end
+    end
 
+    -- Add all missing members
+    for name in pairs(members) do
         if not self:MemberExists(name) then self:NewMember(name) end
-        countMembers = countMembers -1
+    end
+
+    -- Check memberCount, if it's not equal to countMembers, it must be more then that
+    -- (each call self:NewMember adds one to the counter). So we have to remove invalid
+    -- items from the master list
+    if highscoreSettings.memberCount ~= countMembers then
+        for name in pairs(highscoreSettings.members) do
+            if members[name] == nil then
+                highscoreSettings.members[name] = nil
+                highscoreSettings.memberCount = highscoreSettings.memberCount - 1
+                if highscoreSettings.memberCount == countMembers then break end
+            end
+        end
     end
 
     self:UpdateHighscoreWindow()
-    self:UpdateWindowSize()
 end
 
 
@@ -123,6 +138,8 @@ function GroupLootHighscore:UpdateWindowSize()
 end
 
 function GroupLootHighscore:UpdateHighscoreWindow()
+    self:UpdateWindowSize()
+
     local count = 0
     for k, v in pairs(highscoreSettings.members) do
         count = count + 1
@@ -291,13 +308,6 @@ function GroupLootHighscore:ConsoleCommands()
             d("Nothing recorded yet.")
         end
     end
-
-    -- -- Update the highscore window (debug)
-    -- SLASH_COMMANDS["/glhupdate"] = function ()
-    --     GroupLootHighscore:UpdateHighscoreWindow()
-    --     GroupLootHighscore:UpdateWindowSize()
-    --     d("Group Loot highscore window size and values updated")
-    -- end
 
     -- Reset all stats from the .member table
     SLASH_COMMANDS["/glhreset"] = function ()
