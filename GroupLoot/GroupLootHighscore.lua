@@ -63,6 +63,7 @@ end
 function GroupLootHighscore:RemoveMember(name)
     name = zo_strformat(SI_UNIT_NAME, name)
     highscoreSettings.members[name] = nil
+    highscoreSettings.memberCount = highscoreSettings.memberCount - 1
     self:UpdateHighscoreWindow()
 end
 
@@ -143,6 +144,8 @@ function GroupLootHighscore:UpdateHighscoreWindow()
     local count = 0
     for k, v in pairs(highscoreSettings.members) do
         count = count + 1
+
+        if count > 24 then break end
 
         GroupLootHighscoreWindow:GetNamedChild("ROW" .. count .. "NAME"):SetText(k)
         GroupLootHighscoreWindow:GetNamedChild("ROW" .. count .. "TRASH"):SetText(v.trash)

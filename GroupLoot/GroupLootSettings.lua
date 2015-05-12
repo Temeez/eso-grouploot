@@ -1,5 +1,5 @@
 local ADDON_NAME = "GroupLoot"
-local ADDON_VERSION = "0.9.4"
+local ADDON_VERSION = "0.9.5"
 
 local LAM2 = LibStub("LibAddonMenu-2.0")
 if not LAM2 then return end
