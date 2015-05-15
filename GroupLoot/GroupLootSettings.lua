@@ -1,5 +1,5 @@
 local ADDON_NAME = "GroupLoot"
-local ADDON_VERSION = "0.9.5"
+local ADDON_VERSION = "0.9.7"
 
 local LAM2 = LibStub("LibAddonMenu-2.0")
 if not LAM2 then return end
@@ -27,6 +27,7 @@ function GroupLootSettings:Initialize()
         displayOnChat       = true,
         displayOwnLoot      = true,
         displayGroupLoot    = true,
+        displaySetItems     = false,
         positionLeft        = nil,
         positionTop         = nil,
         displayLootValue    = false,
@@ -155,6 +156,15 @@ function GroupLootSettings:Initialize()
         },
         {
             type = "checkbox",
+            name = "Display set items only",
+            tooltip = "Show or hide set item loot.",
+            getFunc = function() return settings.displaySetItems end,
+            setFunc = function(value) self:ToggleSetItems(value) end,
+            width = "full",
+            default = GroupLootDefaults.displaySetItems
+        },
+        {
+            type = "checkbox",
             name = "Display on chat",
             tooltip = "Show or hide loot on chat.",
             getFunc = function() return settings.displayOnChat end,
@@ -196,6 +206,10 @@ function GroupLootSettings:DisplayLootValue()
     return settings.displayLootValue
 end
 
+function GroupLootSettings:DisplaySetItems()
+    return settings.displaySetItems
+end
+
 --[[
     UI functions
 
@@ -203,6 +217,7 @@ end
 ]]--
 function GroupLootSettings:MoveStart()
     GroupLootWindowBG:SetAlpha(0.5)
+    GroupLootWindowBuffer:ShowFadedLines()
 end
 
 function GroupLootSettings:MoveStop()
@@ -267,6 +282,10 @@ end
 function GroupLootSettings:ToggleOnWindow(value)
     settings.displayOnWindow = value
     if value then self:SetWindowValues() end
+end
+
+function GroupLootSettings:ToggleSetItems(value)
+    settings.displaySetItems = value
 end
 
 function GroupLootSettings:ToggleOwnLoot(value)

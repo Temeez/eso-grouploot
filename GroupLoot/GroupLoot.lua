@@ -18,6 +18,8 @@ function GroupLoot:OnAddOnLoaded(event, addonName)
     GLSettings  = GroupLootSettings:New()
     GLHighscore = GroupLootHighscore:New()
 
+    GroupLootWindowBuffer:SetLineFade(6,4)
+
     self:Initialize()
 end
 
@@ -26,6 +28,22 @@ function GroupLoot:OnItemLooted(event, name, itemLink, quantity, itemSound, loot
     local lootMessage   = nil
     local itemQuality   = GetItemLinkQuality(itemLink)
     local totalValue    = GetItemLinkValue(itemLink, true) * quantity
+    local itemName      = zo_strformat("<<t:1>>", itemLink)
+    local itemFound     = false
+
+    if GLSettings:DisplaySetItems() then
+        -- Iterate through the set item list
+        for k, v in pairs(SetItemList) do
+            if string.match(itemName, '.*' .. v .. '*.') then
+               itemFound = true 
+               break;
+            end
+        end
+
+        -- Stop if nothing found
+        if not itemFound then return end 
+
+    end
 
     -- Return if own (player) loot is off
     if player and not GLSettings:DisplayOwnLoot() then return end
